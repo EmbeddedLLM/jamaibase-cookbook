@@ -2,28 +2,12 @@ import sys
 import streamlit as st
 import httpx
 from httpx import Timeout
-from typing import Annotated, Generic, Sequence, TypeVar
 from loguru import logger
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
-from pydantic import BaseModel, Field
-
-T = TypeVar("T")
-
-
-class Page(BaseModel, Generic[T]):
-    items: Annotated[
-        Sequence[T], Field(description="List of items paginated items.", examples=[[]])
-    ] = []
-    offset: Annotated[
-        int, Field(description="Number of skipped items.", examples=[0])
-    ] = 0
-    limit: Annotated[
-        int, Field(description="Number of items per page.", examples=[0])
-    ] = 0
-    total: Annotated[int, Field(description="Total number of items.", examples=[0])] = 0
+from protocol import Page
 
 
 def get_rows(table_id):
@@ -70,13 +54,13 @@ def bar_chart(df_expanded, col1, col2):
     ax.set_xlabel(col1)
     ax.set_ylabel("Normalized Frequency")
     ax.legend(title=col2)
+    ax.tick_params(labelrotation=0)
 
     # Use Streamlit to display the chart
     st.pyplot(fig)
 
 
 def apps():
-
     FLATTEN_SCHEMA = {
         "Fit Sizing": ["true to size", "runs small", "runs large"],
         "Fit Silhouette": [

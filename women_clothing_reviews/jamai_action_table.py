@@ -4,12 +4,7 @@ import time
 import httpx
 from httpx import Timeout
 from loguru import logger
-
-from eagle.protocol import (
-    Page,
-    TableMetaResponse,
-)
-
+from protocol import Page
 
 BASE_URL = "http://192.168.80.61:6969/api"
 
@@ -146,16 +141,7 @@ class ActionTableCommuniate:
     def get_table(self, table_id):
         response = self.client.get(f"{BASE_URL}/v1/gen_tables/action/{table_id}")
         response.raise_for_status()
-        meta = TableMetaResponse(**response.json())
-        return meta
-
-    def list_tables(self):
-        response = self.client.get(f"{BASE_URL}/v1/gen_tables/action")
-        response.raise_for_status()
-        page = Page[TableMetaResponse](**response.json())
-        table_ids = [page_item.id for page_item in page.items]
-        logger.info(table_ids)
-        return table_ids
+        return response.json()
 
     def delete_table(self, table_id):
         response = self.client.delete(f"{BASE_URL}/v1/gen_tables/action/{table_id}")
@@ -201,13 +187,9 @@ def main():
 
     atc = ActionTableCommuniate()
 
-    table_id = f"WomenClothingReviews_cookbook"
+    table_id = "WomenClothingReviews_cookbook"
 
     try:
-        # Check exiting tables
-        current_table_ids = atc.list_tables()
-        logger.info(f"Existing Table Ids: {current_table_ids}")
-
         # atc.delete_table(table_id)
 
         cols_info = (
@@ -239,7 +221,7 @@ def main():
             },
         )
 
-        # atc.create_table(table_id, cols_info)
+        atc.create_table(table_id, cols_info)
 
         column_map = {
             "Keywords": {
@@ -309,7 +291,7 @@ def main():
 
         records = DF.to_dict("records")
         # --- Sample some rows, comment out to include all rows --- #
-        records = records[::1000]
+        records = records[::500]
         # --------------------------------------------------------- #
         with Timer() as t:
             for i, record in enumerate(records):
