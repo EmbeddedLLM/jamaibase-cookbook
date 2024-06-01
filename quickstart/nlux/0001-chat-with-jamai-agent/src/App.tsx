@@ -54,8 +54,8 @@ export const App = () => {
       adapter={streamAdapter}
       personaOptions={{
         assistant: {
-          name: 'EinAssistant',
-          tagline: 'Your Genius AI Assistant',
+          name: 'JamJam',
+          tagline: 'Your Friendly AI Assistant',
           avatar: assistantAvatar
         },
         user
