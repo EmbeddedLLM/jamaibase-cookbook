@@ -33,3 +33,10 @@ logs/
 # OS
 thumbs.db
 .DS_Store
+
+# typescript / javascript
+
+**/node_modules
+**/dist
+**/dist-ssr
+*.local
