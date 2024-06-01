@@ -9,6 +9,7 @@ import JamAI from 'jamaibase'; // Assuming JamAI is imported from a library
 const baseURL = "https://api.jamaibase.com";
 const apiKey = "";
 const projectId = "";
+const agentId = "first-chatbot";
 
 export const App = () => {
   const [jamaiInstance, setJamaiInstance] = useState(null);
@@ -26,10 +27,10 @@ export const App = () => {
         dangerouslyAllowBrowser: true
       });
 
-      const new_table_id = `first-chatbot-conv1-${uuid4v()}`;
+      const new_table_id = `${agentId}-conv-${uuid4v()}`;
 
       await jamai.duplicateTable({
-        table_id_src: "first-chatbot",
+        table_id_src: agentId,
         table_type: "chat",
         table_id_dst: new_table_id,
         include_data: false,
