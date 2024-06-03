@@ -1,10 +1,6 @@
 "use client";
 
-import { table } from "console";
-import {
-    PageListTableMetaResponse,
-    TableTypes,
-} from "jamaibase/resources/gen_tables/tables";
+import { PageListTableMetaResponse } from "jamaibase/resources/gen_tables/tables";
 import { ChangeEvent, useEffect, useState } from "react";
 
 export default function Home() {
@@ -31,10 +27,7 @@ export default function Home() {
     return (
         <main className="flex min-h-screen flex-col  p-24">
             <div className="max-w-sm mx-auto my-10 p-5 bg-white rounded-lg shadow-md">
-                <label
-                    htmlFor="movieGenre"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                     Choose Table Type:
                 </label>
                 <select

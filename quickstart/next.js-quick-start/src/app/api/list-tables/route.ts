@@ -5,19 +5,17 @@ import {
 } from "jamaibase/resources/gen_tables/tables";
 import { NextRequest, NextResponse } from "next/server";
 
+const jamai = new JamAI({
+    baseURL: process.env.NEXT_PUBLIC_JAMAI_BASEURL!,
+    apiKey: process.env.JAMAI_API_KEY,
+    projectId: process.env.JAMAI_PROJECT_ID,
+});
+
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const tableType = (searchParams.get("type") || "action") as TableTypes;
 
-    const jamai = new JamAI({
-        baseURL: process.env.NEXT_PUBLIC_JAMAI_BASEURL!,
-        apiKey: process.env.JAMAI_API_KEY,
-        projectId: process.env.JAMAI_PROJECT_ID,
-    });
-
     try {
-        console.log("type: ", tableType);
-
         let data: PageListTableMetaResponse = await jamai.listTables({
             table_type: tableType,
         });
