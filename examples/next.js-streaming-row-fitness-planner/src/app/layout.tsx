@@ -5,9 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Workout Suggestion - Jamai",
+    title: "Fitness Planner - Jamai",
     description:
-        "This app  suggest workout plan based on age, height, weight and preferred body type",
+        "This app suggest workout and meal plan based on age, height, weight and preferred body type",
 };
 
 export default function RootLayout({

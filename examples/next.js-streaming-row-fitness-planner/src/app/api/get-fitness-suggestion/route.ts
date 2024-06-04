@@ -23,9 +23,9 @@ export async function POST(request: NextRequest) {
                     preferred_body_type: body.preferredBodyType,
                 },
             ],
-            table_id: "workout-suggestion",
+            table_id: "fitness_planner",
             reindex: null,
-            concurrent: false,
+            concurrent: true,
         });
 
         return new StreamingTextResponse(streamText(stream));
@@ -52,7 +52,8 @@ function streamText(
                     break;
                 }
                 // Extract the text content from the chunk
-                const text = value.choices[0]?.message.content;
+                const text = JSON.stringify(value);
+
                 if (text) {
                     // Enqueue the text content as a chunk to the new stream
                     controller.enqueue(text);

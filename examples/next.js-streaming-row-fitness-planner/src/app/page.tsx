@@ -2,6 +2,8 @@
 
 import ReactMarkdown from "react-markdown";
 import { ChangeEvent, useState } from "react";
+import { processJsonStream } from "./utils";
+import { GenTableStreamChatCompletionChunk } from "jamaibase/resources/gen_tables/chat";
 
 export default function HomePage() {
     const [age, setAge] = useState<number | null>(null);
@@ -9,6 +11,7 @@ export default function HomePage() {
     const [height, setHeight] = useState<number | null>(null);
     const [preferredBodyType, setPreferredBodyType] = useState<string>("");
     const [workoutPlan, setWorkoutPlan] = useState<string>("");
+    const [mealPlan, setMealPlan] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [sex, setSex] = useState("male");
@@ -20,9 +23,11 @@ export default function HomePage() {
     const handleSubmit = async () => {
         setIsLoading(true);
         setWorkoutPlan("");
+        setMealPlan("");
         if (age && weight && height && preferredBodyType && sex) {
-            const response = await fetch(`/api/get-workout-suggestion`, {
+            const response = await fetch(`/api/get-fitness-suggestion`, {
                 method: "POST",
+
                 body: JSON.stringify({
                     age,
                     weight,
@@ -33,17 +38,25 @@ export default function HomePage() {
             });
             if (response.ok && response.body) {
                 const reader = response.body.getReader();
-                const decoder = new TextDecoder("utf-8");
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value, { stream: true });
-                    setWorkoutPlan((prev) => prev + chunk);
-                }
-                setIsLoading(false);
+                processJsonStream<GenTableStreamChatCompletionChunk>(
+                    reader,
+                    (content) => {
+                        if (content.output_column_name == "workout") {
+                            setWorkoutPlan(
+                                (prev) =>
+                                    prev + content.choices[0]?.message.content
+                            );
+                        } else {
+                            setMealPlan(
+                                (prev) =>
+                                    prev + content.choices[0]?.message.content
+                            );
+                        }
+                    },
+                    () => setIsLoading(false)
+                );
             } else {
-                alert("Something went wrong!");
+                alert("Something went wrong");
             }
         } else {
             alert("Please fill in all fields.");
@@ -53,10 +66,13 @@ export default function HomePage() {
 
     return (
         <main className="p-12 ">
+            <h1 className="text-3xl font-bold text-center mb-8 underline">
+                My Fitness Planner
+            </h1>
             <div className="grid grid-cols-3 mx-6 gap-x-6">
                 <div className=" p-6 shadow-md rounded-md">
-                    <h2 className="text-2xl font-bold mb-4">
-                        Daily Workout Plannner
+                    <h2 className="text-2xl font-bold mb-6">
+                        Suggested Daily Workout Plan :
                     </h2>
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">
@@ -143,11 +159,18 @@ export default function HomePage() {
                         Get Workout Plan
                     </button>
                 </div>
-                <div className="p-4 border col-span-2 border-gray-300 rounded-md">
+
+                <div className="p-4 border  border-gray-300 rounded-md">
                     <h2 className="text-2xl font-bold mb-6">
                         Suggested Daily Workout Plan :
                     </h2>
                     <ReactMarkdown>{workoutPlan}</ReactMarkdown>
+                </div>
+                <div className="p-4 border  border-gray-300 rounded-md">
+                    <h2 className="text-2xl font-bold mb-6">
+                        Suggested Daily Meal Plan :
+                    </h2>
+                    <ReactMarkdown>{mealPlan}</ReactMarkdown>
                 </div>
             </div>
         </main>
