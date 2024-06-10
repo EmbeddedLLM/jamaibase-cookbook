@@ -15,6 +15,7 @@ venv/
 
 # Internal references, dependencies, temporary folders & files
 .env
+.env.*
 /db/
 **/__ref__/
 /dependencies/
