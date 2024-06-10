@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
         let data: PageListTableMetaResponse = await jamai.listTables({
             table_type: tableType,
         });
-        console.log("data: ", data.items.length);
         return NextResponse.json(data);
     } catch (error: any) {
         console.error("Error fetching tables:", error.response);
